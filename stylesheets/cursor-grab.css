@@ -1,0 +1,21 @@
+.hand {
+  cursor: hand; 
+  cursor: grab; 
+  cursor: -moz-grab; 
+  cursor: -webkit-grab;
+}
+
+.lt-ie9 .hand {
+  cursor: url(../cursors/openhand.cur), default !important;
+}
+
+.handGrab {
+  cursor: hand; 
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.lt-ie9 .handGrab {
+  cursor: url(../cursors/closedhand.cur), default !important;
+}

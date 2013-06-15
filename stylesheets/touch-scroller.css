@@ -1,0 +1,68 @@
+/* Outer container - progressively enhance */
+.scroll-outer {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Inner content */
+.scroll-inner {
+  position: relative;
+  left: 0;
+  top: 0;
+  float: left;
+  transform-origin: 0 0;
+  -webkit-transform-origin: 0 0;
+  -o-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+}
+
+/* Scroll bar holder */
+.scrollbar {
+  position: absolute;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.scrollbar.horizontal {
+  height: 5px;
+  left: 0;
+  bottom: 4px;
+  padding: 0 4px;
+}
+
+.scrollbar.vertical {
+  width: 5px;
+  right: 4px;
+  top: 0;
+  padding: 4px 0;
+}
+
+/* Scroll bar indicator */
+.scrollbar-pill {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background-color: #000;
+  border-radius: 6px;
+  opacity: 0;
+}
+
+.scroll-outer .scrollbar-pill {  /* .no-android  */
+  -webkit-transition: opacity 0.2s ease-in-out;
+  -o-transition: opacity 0.2s ease-in-out;
+  -moz-transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.scroll-outer .scrollbar.horizontal .scrollbar-pill {
+  height: 5px;
+}
+
+.scroll-outer .scrollbar.vertical .scrollbar-pill {
+  width: 5px;
+}
+
+.scrollbar-pill.showing {
+  display: block;
+  opacity: 1;
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>   <html class="lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>     <html class="lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>     <html class="lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Touch Track Scroll</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Required CSS -->
+    <link rel="stylesheet" href="stylesheets/cursor-grab.css">
+    <link rel="stylesheet" href="stylesheets/touch-scroller.css">
+    <!-- Demos CSS -->
+    <link rel="stylesheet" href="stylesheets/demos.css">
+    <!-- demo-specific css -->
+    <style>
+    </style>
+  </head>
+  <body>
+    <!-- Scrollable container -->
+    <div class="scroll-outer">
+      <div class="scroll-inner">
+        <div class="page odd"><article>Touch Track Scroll&trade;</article></div>
+        <div class="page even">
+          <article>
+            Scroll 
+            <span id="direction-h" class="direction selection active">horizontally</span>, 
+            <span id="direction-v" class="direction selection">vertically</span>, or
+            <span id="direction-g" class="direction selection">grid</span>
+            on any device*.
+          </article>
+        </div>
+        <div class="page odd">
+          <article>
+            Scroll 
+            <span id="paged-false" class="paged selection">freely</span>, 
+            or <span id="paged-true" class="paged selection active">snap</span>
+            to pages.
+          </article>
+        </div>
+        <div class="page even"><article>Adjust speed, bounce, scrollbars.<br/>(Demo coming soon)</article></div>
+        <div class="page odd"><article>Scroll inside a scroller.<br/>(Demo coming soon)</article></div>
+        <div class="page even"><article>Scroll pages infinitely.<br/>(Demo coming soon)</article></div>
+      </div>
+    </div>
+    <!-- Required javascripts -->
+    <script src="javascripts/css-helper.js"></script>
+    <script src="javascripts/cursor-hand.js"></script>
+    <script src="javascripts/mouse-and-touch-tracker.js"></script>
+    <script src="javascripts/touch-scroller.js"></script>
+    <!-- Optional (but recommended) javascripts -->
+    <script src="javascripts/mobile-util.js"></script>
+    <script src="javascripts/vendor/request-animation-frame.js"></script>
+    <!-- Demo code -->
+    <script>
+      // for a locked mobile screen
+      MobileUtil.lockTouchScreen(true);
+
+      // grab pages and container elements for layout changes
+      var scrollInner = document.getElementsByClassName("scroll-inner")[0];
+      var scrollOuter = document.getElementsByClassName("scroll-outer")[0];
+      var pages = document.getElementsByClassName("page");
+      var numPages = pages.length;
+
+      // set width of pages and scroll-inner to let pages float horizontally
+      var setHorizontalLayout = function() {
+        scrollInner.style.width = numPages*100+'%';         // inner-scroll element is set to 100% * numPages
+        scrollInner.style.height = '';
+        for(var i=0; i < numPages; i++) {
+          pages[i].style.width = (1/numPages)*100+'%';      // each page is set to 100% / numPages to fill scroll-inner
+          pages[i].style.height = '';
+        };
+      };
+
+      // set width of pages and scroll-inner to let pages float vertically
+      var setVerticalLayout = function() {
+        scrollInner.style.width = '';
+        scrollInner.style.height = numPages*100+'%';         // inner-scroll element is set to 100% * numPages
+        for(var i=0; i < numPages; i++) {
+          pages[i].style.width = '';
+          pages[i].style.height = (1/numPages)*100+'%';      // each page is set to 100% / numPages to fill scroll-inner
+        };
+      };
+
+      // 
+      var setGridLayout = function() {
+        var rows = Math.ceil(numPages/3);
+        scrollInner.style.width = '300%';
+        scrollInner.style.height = rows*100+'%';         // inner-scroll element is set to 100% * numPages
+        for(var i=0; i < numPages; i++) {
+          pages[i].style.width = (1/3)*100+'%';
+          pages[i].style.height = (1/rows)*100+'%';      // each page is set to 100% / numPages to fill scroll-inner
+        };
+      };
+
+
+
+      // set class on selected button
+      var setActiveButton = function(button, buttons) {
+        for(var i=0; i < buttons.length; i++) {
+          if(button == buttons[i]) {
+            buttons[i].classList.add('active');
+          } else {
+            buttons[i].classList.remove('active');
+          }
+        }
+      };
+
+      // setup scroll direction change handlers ------------------------------
+      var directionButtons = document.getElementsByClassName("direction");
+
+      var buttonDirectionH = document.getElementById('direction-h');
+      buttonDirectionH.addEventListener('click',function(){
+        setHorizontalLayout();
+        scroller.setOrientation(tts.TouchScroller.HORIZONTAL);
+        setActiveButton(buttonDirectionH, directionButtons);
+      },false);
+
+      var buttonDirectionV = document.getElementById('direction-v');
+      buttonDirectionV.addEventListener('click',function(){
+        setVerticalLayout();
+        scroller.setOrientation(tts.TouchScroller.VERTICAL);
+        setActiveButton(buttonDirectionV, directionButtons);
+      },false);
+
+      var buttonDirectionG = document.getElementById('direction-g');
+      buttonDirectionG.addEventListener('click',function(){
+        setGridLayout();
+        scroller.setOrientation(tts.TouchScroller.UNLOCKED);
+        setActiveButton(buttonDirectionG, directionButtons);
+      },false);
+
+      // setup (non-)paged toggle --------------------------------------------
+      var pagedButtons = document.getElementsByClassName("paged");
+
+      var pagedTrueButton = document.getElementById('paged-true');
+      pagedTrueButton.addEventListener('click',function(){
+        scroller.setIsPaged(true);
+        setActiveButton(pagedTrueButton, pagedButtons);
+      },false);
+
+      var pagedFalseButton = document.getElementById('paged-false');
+      pagedFalseButton.addEventListener('click',function(){
+        scroller.setIsPaged(false);
+        setActiveButton(pagedFalseButton, pagedButtons);
+      },false);
+
+      // basic scroller setup ------------------------------------------------
+      var scrollerDelegate = {
+        updatePosition: function(positionX, positionY, isTouching) {
+          // console.log( scroller.getCurScrollPosition() );
+        },
+        touchEnd: function() {
+          
+        },
+        handleDestination: function() {
+          // console.log( scroller.getCurScrollPosition() );
+        },
+        pageChanged: function() {
+          console.log( 'page: '+scroller.getPage() );
+        }
+      };
+
+      // set basic options object - lots more can be overridden in touch-scroller.js
+      var scrollOptions = {
+        isPaged: true,
+        defaultOrientation: tts.TouchScroller.HORIZONTAL,
+        scrollerDelegate: {},
+        disabledElements: "div",
+        pagedEasingFactor: 5
+      };
+
+      // initialize the scroller with or main containers and options
+      setHorizontalLayout();
+      var scroller = new tts.TouchScroller(
+        document.getElementsByClassName("scroll-outer")[0], 
+        document.getElementsByClassName("scroll-inner")[0], 
+        scrollOptions
+      );
+    </script>
+  </body>
+</html>
