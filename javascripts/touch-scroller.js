@@ -13,7 +13,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         this.h = h || 0;
     };
 
-    var Position2d = function( x, y ) {
+    var Point2d = function( x, y ) {
         this.x = x || 0;
         this.y = y || 0;
     };
@@ -71,7 +71,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _hasLockedDragAxis = false,
         _dragLockAxis = null,
         _staysInBounds = true,
-        _wasDraggedBeyondBounds = new Position2d( false, false ),
+        _wasDraggedBeyondBounds = new Point2d( false, false ),
 
         // touch helpers
         _cursor = ( defaultOptions.hasCursor ) ? new tts.CursorHand() : null,
@@ -84,21 +84,21 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _scrollInnerEl = scrollInnerEl,
 
         // positioning and css flags
-        _speed = new Position2d(),
-        _curPosition = new Position2d(),
-        _endPosition = new Position2d(),
+        _speed = new Point2d(),
+        _curPosition = new Point2d(),
+        _endPosition = new Point2d(),
         _containerSize = new Size2d(),
         _contentSize = new Size2d(),
-        _doesntNeedScroll = new Position2d( false, false ),
+        _doesntNeedScroll = new Point2d( false, false ),
 
         // deal with pages
         _pagedEasingFactor = defaultOptions.pagedEasingFactor,
         _pageTurnRatio = defaultOptions.pageTurnRatio,
         _isPaged = defaultOptions.isPaged,
 
-        _numPages = new Position2d(),
-        _pageIndex = new Position2d(),
-        _closestScrollIndex = new Position2d(),
+        _numPages = new Point2d(),
+        _pageIndex = new Point2d(),
+        _closestScrollIndex = new Point2d(),
 
         _timerFps = 16,
         _timerActive = false,
@@ -106,7 +106,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         // deal with direction of scroller
         _hasScrollBars = defaultOptions.hasScrollbars,
         _scrollbars = null,
-        _axis = null,   // will be x/y for Position2d
+        _axis = null,   // will be x/y for Point2d
         _scrollsX = false,
         _scrollsY = false;
 
@@ -114,7 +114,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         setScrollerDelegate( defaultOptions.scrollerDelegate );
         _cssHelper = new tts.CSSHelper();
         _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements );
-        if( _hasScrollBars ) _scrollbars = new Position2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
+        if( _hasScrollBars ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
 
         setOrientation( _orientation );
         calculateDimensions();

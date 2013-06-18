@@ -1,13 +1,18 @@
 var tts = tts || {};
 
 tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disabledElements ) {
+  var Point2d = function( x, y ) {
+    this.x = x || 0;
+    this.y = y || 0;
+  };
+
   // positioning / tracking coordinates
-  this.container_position = { x:0, y:0 };
-  this.touchstart = { x : 0, y : 0 };
-  this.touchcurrent = { x : 0, y : 0 };
-  this.touchmovedlast = { x : 0, y : 0 };
-  this.touchmoved = { x : 0, y : 0 };
-  this.touchspeed = { x : 0, y : 0 };
+  this.container_position = new Point2d();
+  this.touchstart = new Point2d();
+  this.touchcurrent = new Point2d();
+  this.touchmovedlast = new Point2d();
+  this.touchmoved = new Point2d();
+  this.touchspeed = new Point2d();
 
   // state flags
   this.is_touching = false;
