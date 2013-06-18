@@ -157,6 +157,7 @@
         },
         handleDestination: function() {
           // console.log( scroller.getCurScrollPosition() );
+          // console.log('handleDestination');
         },
         pageChanged: function() {
           console.log( 'page: '+scroller.getPage() );
@@ -167,9 +168,10 @@
       var scrollOptions = {
         isPaged: true,
         defaultOrientation: tts.TouchScroller.HORIZONTAL,
-        scrollerDelegate: {},
+        scrollerDelegate: scrollerDelegate,
         disabledElements: "div",
-        pagedEasingFactor: 5
+        pagedEasingFactor: 6,
+        nonPagedFriction: 0.9
       };
 
       // initialize the scroller with or main containers and options

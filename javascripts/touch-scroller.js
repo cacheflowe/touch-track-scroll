@@ -352,7 +352,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
     };
 
     var hasSlowedToStopForAxis = function( axis ) {
-        return (Math.abs( _speed[ axis ] ) <= 0.15);
+        return (Math.abs( _speed[ axis ] ) <= 0.01);
     };
 
     var easeToIndex = function() {
@@ -463,9 +463,10 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         // get location based on current position
         var targetPos = pageIndex * -containerSize;
         if( curPosition !== targetPos ) {
-            if (Math.abs( curPosition - targetPos ) <= 0.5 ) {
+            if (Math.abs( curPosition - targetPos ) <= 0.25 ) {
                 curPosition = targetPos;
                 handleDestination();
+                return curPosition;
             }
         }
         // ease position to target
