@@ -352,7 +352,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
     };
 
     var hasSlowedToStopForAxis = function( axis ) {
-        return (Math.abs( _speed[ axis ] ) <= 0.1);
+        return (Math.abs( _speed[ axis ] ) <= 0.15);
     };
 
     var easeToIndex = function() {
