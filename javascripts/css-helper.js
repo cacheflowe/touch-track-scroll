@@ -41,6 +41,7 @@ tts.CSSHelper = function() {
     if( !element ) return;
     if( keepTransition != true ) keepTransition = false;
     scale = scale || 1;
+    rot = rot || 0;
 
     // since we're manually setting position, generally we're doing this in a frame loop, and should disable css transitions if true
     if( keepTransition == false ) clearCssTransition( element );
