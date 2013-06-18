@@ -23,10 +23,10 @@ ButtonTouchCallback.prototype.touchUpdated = function ( touchState, touchEvent )
   if( touchState == tts.MouseAndTouchTracker.state_move ) {
     if( Math.abs( this.touch_tracker.touchmoved.x ) + Math.abs( this.touch_tracker.touchmoved.y ) >= this.CANCEL_THRESHOLD ) this.canceled = true;
     if( Math.abs( this.touch_tracker.touchspeed.x ) + Math.abs( this.touch_tracker.touchspeed.y ) >= this.CANCEL_THRESHOLD ) this.canceled = true;
-    if( this.canceled && this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '');
+    if( this.canceled && this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '').replace('  ', ' ');
   }
   if( touchState == tts.MouseAndTouchTracker.state_end ) {
-    if( this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '');
+    if( this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '').replace('  ', ' ');
     // call callback method if touch didn't move past threshold
     var moveTotal = Math.abs( this.touch_tracker.touchmoved.x ) + Math.abs( this.touch_tracker.touchmoved.y );
     if( this.touch_tracker && moveTotal > this.CANCEL_THRESHOLD && this.started_touching ) this.canceled = true;
