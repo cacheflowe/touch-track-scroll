@@ -1,3 +1,9 @@
+/* Disable text/element selection */
+.nocopy {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
 /* Outer container - progressively enhance */
 .scroll-outer {
   position: relative;
