@@ -22,8 +22,8 @@
     <!-- Scrollable container -->
     <div class="scroll-outer">
       <div class="scroll-inner">
-        <div class="page odd"><article>Touch Track Scroll&trade;</article></div>
-        <div class="page even">
+        <div class="page nocopy odd"><article>Touch Track Scroll&trade;</article></div>
+        <div class="page nocopy even">
           <article>
             Scroll 
             <span id="direction-h" class="direction selection active">horizontally</span>, 
@@ -32,7 +32,7 @@
             on any device*.
           </article>
         </div>
-        <div class="page odd">
+        <div class="page nocopy odd">
           <article>
             Scroll 
             <span id="paged-false" class="paged selection">freely</span>, 
@@ -40,9 +40,9 @@
             to pages.
           </article>
         </div>
-        <div class="page even"><article>Adjust speed, bounce, scrollbars.<br/>(Demo coming soon)</article></div>
-        <div class="page odd"><article>Scroll inside a scroller.<br/>(Demo coming soon)</article></div>
-        <div class="page even"><article>Scroll pages infinitely.<br/>(Demo coming soon)</article></div>
+        <div class="page nocopy even"><article>Adjust speed, bounce, scrollbars.<br/>(Demo coming soon)</article></div>
+        <div class="page nocopy odd"><article>Scroll inside a scroller.<br/>(Demo coming soon)</article></div>
+        <div class="page nocopy even"><article>Scroll pages infinitely.<br/>(Demo coming soon)</article></div>
       </div>
     </div>
     <!-- Required javascripts -->
@@ -157,6 +157,7 @@
         },
         handleDestination: function() {
           // console.log( scroller.getCurScrollPosition() );
+          // console.log('handleDestination');
         },
         pageChanged: function() {
           console.log( 'page: '+scroller.getPage() );
@@ -167,9 +168,10 @@
       var scrollOptions = {
         isPaged: true,
         defaultOrientation: tts.TouchScroller.HORIZONTAL,
-        scrollerDelegate: {},
+        scrollerDelegate: scrollerDelegate,
         disabledElements: "div",
-        pagedEasingFactor: 5
+        pagedEasingFactor: 6,
+        nonPagedFriction: 0.9
       };
 
       // initialize the scroller with or main containers and options

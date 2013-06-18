@@ -8,25 +8,25 @@ function ButtonTouchCallback( element, callback, highlightClass ) {
   this.canceled = false;
   // create touch tracker
   var self = this;
-  this.touch_tracker = new MouseAndTouchTracker( this.element, function( touchState, touchEvent ) {
+  this.touch_tracker = new tts.MouseAndTouchTracker( this.element, function( touchState, touchEvent ) {
     self.touchUpdated( touchState, touchEvent );
   }, false, '' );
 }
 
 ButtonTouchCallback.prototype.touchUpdated = function ( touchState, touchEvent ) {
-  if( touchState == MouseAndTouchTracker.state_start ) {
+  if( touchState == tts.MouseAndTouchTracker.state_start ) {
     if( this.highlight_class ) this.element.className = [this.element.className, this.highlight_class].join(' ');
     this.started_touching = true;
     this.canceled = false;
   }
   // cancel click if mouse/touch moves past threshold
-  if( touchState == MouseAndTouchTracker.state_move ) {
+  if( touchState == tts.MouseAndTouchTracker.state_move ) {
     if( Math.abs( this.touch_tracker.touchmoved.x ) + Math.abs( this.touch_tracker.touchmoved.y ) >= this.CANCEL_THRESHOLD ) this.canceled = true;
     if( Math.abs( this.touch_tracker.touchspeed.x ) + Math.abs( this.touch_tracker.touchspeed.y ) >= this.CANCEL_THRESHOLD ) this.canceled = true;
-    if( this.canceled && this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '');
+    if( this.canceled && this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '').replace('  ', ' ');
   }
-  if( touchState == MouseAndTouchTracker.state_end ) {
-    if( this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '');
+  if( touchState == tts.MouseAndTouchTracker.state_end ) {
+    if( this.highlight_class ) this.element.className = this.element.className.replace(this.highlight_class, '').replace('  ', ' ');
     // call callback method if touch didn't move past threshold
     var moveTotal = Math.abs( this.touch_tracker.touchmoved.x ) + Math.abs( this.touch_tracker.touchmoved.y );
     if( this.touch_tracker && moveTotal > this.CANCEL_THRESHOLD && this.started_touching ) this.canceled = true;
