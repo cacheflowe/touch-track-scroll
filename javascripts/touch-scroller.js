@@ -431,6 +431,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         // snap to page and constrain page calculation
         if( _isPaged == true ) {
             var dimension = getDimensionForAxis( axis );
+            var prevPage = _pageIndex[ axis ];
             var pageChanged = false;
             // have we swiped far enough to turn the page
             if( _touchTracker.touchmoved[ axis ] > _containerSize[ dimension ] * _pageTurnRatio ) {
@@ -447,7 +448,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
                 pageChanged = true;
             }
 
-            if( pageChanged == true ) {
+            if( pageChanged == true && prevPage != _pageIndex[ axis ] ) {
                 _scrollerDelegate.pageChanged( _pageIndex[ axis ], axis );
             }
         }
