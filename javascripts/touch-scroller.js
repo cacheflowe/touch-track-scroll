@@ -534,6 +534,10 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         hideScrollbars();
     };
 
+    var getOrientation = function() {
+        return _orientation;
+    };
+
     var getDimensionForAxis = function( axis ) {
         if( axis == AXIS_X ) return SIZE_W;
         else if( axis == AXIS_Y ) return SIZE_H;
@@ -938,6 +942,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         deactivate : deactivate,
         calculateDimensions: calculateDimensions,
         setOrientation : setOrientation,
+        getOrientation : getOrientation,
         setBounces : setBounces,
         setIsPaged : setIsPaged,
         prevPage : prevPage,
