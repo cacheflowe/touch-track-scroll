@@ -47,12 +47,11 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         defaultOrientation: tts.TouchScroller.HORIZONTAL,
         disabledElements: 'div img nav section article',
         // delegate
-        isTouchEnabled: true,
         scrollerDelegate: function(){}
     };
 
     // apply passed-in option overrides
-    for( key in options ){
+    for( var key in options ){
         defaultOptions[key] = options[key];
     }
 
@@ -73,7 +72,6 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _dragLockAxis = null,
         _staysInBounds = true,
         _wasDraggedBeyondBounds = new Point2d( false, false ),
-        _isTouchEnabled = defaultOptions.isTouchEnabled,
 
         // touch helpers
         _cursor = ( defaultOptions.hasCursor ) ? new tts.CursorHand() : null,
@@ -115,7 +113,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
     var init = function() {
         setScrollerDelegate( defaultOptions.scrollerDelegate );
         _cssHelper = new tts.CSSHelper();
-        if( _isTouchEnabled == true ) _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements );
+        _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements );
         if( _hasScrollBars ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
 
         setOrientation( _orientation );
@@ -234,7 +232,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
     var runTimer = function() {
         if( _timerActive && _curPosition ) {
             calculateDimensions();
-            if( !_isTouchEnabled || !_touchTracker.is_touching ) {
+            if( !_touchTracker.is_touching ) {
                 updateWhileNotTouching();
             }
 
@@ -278,6 +276,8 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
             _numPages.y = Math.ceil( _contentSize.h / _containerSize.h );
             _doesntNeedScroll.x = ( _containerSize.w > _contentSize.w );
             _doesntNeedScroll.y = ( _containerSize.h > _contentSize.h );
+            if( _doesntNeedScroll.x == true ) _endPosition.x = 0;
+            if( _doesntNeedScroll.y == true ) _endPosition.y = 0;
             if( _pageIndex.x > _numPages.x - 1 ) _pageIndex.x = _numPages.x - 1;
             if( _pageIndex.y > _numPages.y - 1 ) _pageIndex.y = _numPages.y - 1;
             if( _scrollsX ) sendBackInBounds( AXIS_X );
