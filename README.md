@@ -8,4 +8,4 @@ Check out the [demo](http://cacheflowe.github.io/touch-track-scroll/).
 * Merge recurseDisableELements and add statically to TouchTracker, with ability to reset disabled elements
 * Retest on IEs
 * Retest Android 2.x
-* Test clicking objects in container
+* Remove unused code from TouchScroller
