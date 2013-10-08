@@ -1,7 +1,8 @@
 ### Touch Track Scroll
-A cross-platform, cross-input (mouse & touch), hardware-accelerated scrolling HTML5 container.
+A cross-platform, cross-input (mouse & touch), hardware-accelerated, responsive scrolling HTML5 container.
 
 Check out the [demo](http://cacheflowe.github.io/touch-track-scroll/).
+
 #### TODO
 * Write some documentation
 * Add arrows to demo
