@@ -3,6 +3,7 @@ A cross-platform, cross-input (mouse & touch), hardware-accelerated scrolling HT
 
 Check out the [demo](http://cacheflowe.github.io/touch-track-scroll/).
 #### TODO
+* Write some documentation
 * Add arrows to demo
 * Add more demos showing off the other features
 * Merge recurseDisableElements and add statically to TouchTracker, with ability to reset disabled elements
