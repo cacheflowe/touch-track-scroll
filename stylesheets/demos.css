@@ -17,6 +17,16 @@ body {
   width: 100%;
   height: 100%;
 }
+/* Scroll containers */
+.scroll-outer-secondary, 
+.scroll-inner-secondary {
+  width: 100%;
+  height: 200px;
+}
+.scroll-inner-secondary .page.odd {
+  background: #f0f;
+}
+
 /* Pages */
 .page {
   width: 100%;
@@ -43,4 +53,18 @@ body {
 }
 .selection.active {
   background-color: #fff;
+}
+a, a:visited {
+  text-decoration: none;
+}
+
+#debug {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #fff;
+  padding: 10px;
+  font-size: 10px;
+  line-height: 10px;
+  width: 150px;
 }
