@@ -56,18 +56,19 @@
         <div class="page main-page nocopy even"><article>Scroll pages infinitely.<br/>(Demo coming soon)</article></div>
       </div>
     </div>
+    <!-- Optional (but recommended) javascripts -->
+    <script src="javascripts/mobile-util.js"></script>
+    <script src="javascripts/vendor/request-animation-frame.js"></script>
     <!-- Required javascripts -->
     <script src="javascripts/css-helper.js"></script>
     <script src="javascripts/cursor-hand.js"></script>
     <script src="javascripts/mouse-and-touch-tracker.js"></script>
     <script src="javascripts/touch-scroller.js"></script>
-    <!-- Optional (but recommended) javascripts -->
-    <script src="javascripts/mobile-util.js"></script>
-    <script src="javascripts/vendor/request-animation-frame.js"></script>
     <!-- Demo code -->
     <script>
       // for a locked mobile screen
       MobileUtil.lockTouchScreen(true);
+      MobileUtil.alertErrors();
 
       // grab pages and container elements for layout changes
       var scrollInner = document.body.querySelectorAll(".scroll-inner")[0];
@@ -217,7 +218,8 @@
         scrollerDelegate: scrollerDelegate,
         disabledElements: "div",
         pagedEasingFactor: 6,
-        nonPagedFriction: 0.9
+        nonPagedFriction: 0.9,
+        disablesRightClick: true
       };
 
       // initialize the scroller with or main containers and options
