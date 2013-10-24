@@ -46,6 +46,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         isPaged: true,
         defaultOrientation: tts.TouchScroller.HORIZONTAL,
         disabledElements: 'div img nav section article',
+        disablesRightClick: false,
         // delegate
         scrollerDelegate: function(){}
     };
@@ -118,7 +119,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _scrollerId = generateScrollerId();
         setScrollerDelegate( defaultOptions.scrollerDelegate );
         _cssHelper = new tts.CSSHelper();
-        _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements );
+        _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements, defaultOptions.disablesRightClick );
         if( _hasScrollBars ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
 
         setOrientation( _orientation );

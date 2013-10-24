@@ -1,6 +1,6 @@
 var tts = tts || {};
 
-tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disabledElements ) {
+tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disabledElements, disablesRightClick ) {
   var Point2d = function( x, y ) {
     this.x = x || 0;
     this.y = y || 0;
@@ -52,6 +52,7 @@ tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disab
 
   // hmm...
   this.recurseDisableElements( this.container ); // !this.is_mouseup_tracking  // if(!navigator.userAgent.match(/Android/i))
+  if( disablesRightClick == true ) this.disableRightClick();
 }
 
 // add static constants
@@ -78,6 +79,10 @@ tts.MouseAndTouchTracker.prototype.recurseDisableElements = function ( elem ) {
       }
     }
   }
+};
+
+tts.MouseAndTouchTracker.prototype.disableRightClick = function () {
+  this.container.oncontextmenu = function(e){ return false; };
 };
 
 tts.MouseAndTouchTracker.prototype.disposeTouchListeners = function () {
