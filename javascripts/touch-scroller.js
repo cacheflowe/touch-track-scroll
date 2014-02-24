@@ -122,10 +122,9 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements, defaultOptions.disablesRightClick );
         if( _hasScrollBars ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
 
-        setOrientation( _orientation );
         calculateDimensions();
-
         activate();
+        setOrientation( _orientation );
     };
 
     var touchUpdated = function( state, touchEvent ) {
