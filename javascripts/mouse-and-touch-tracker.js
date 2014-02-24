@@ -22,6 +22,8 @@ tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disab
 
   // store parameters
   this.container = element;
+  this.containerW = 0;
+  this.containerH = 0;
   this.callback = callback;
   this.is_mouseup_tracking = isMouseUpTracking;
   disabledElements = disabledElements || '';
@@ -106,10 +108,14 @@ tts.MouseAndTouchTracker.prototype.onStart = function ( touchEvent ) {
     if( androidVersion < 3 ) {
       // hack for Android 2.x - otherwise touchmove events don't fire. See: http://code.google.com/p/android/issues/detail?id=5491
       if( touchEvent.preventDefault ) {
-        touchEvent.preventDefault();  // if( touchEvent.target.tagName.toLowerCase() != 'img' ) // potential fix for the Android image menu on tap & hold
+        // touchEvent.preventDefault();  // if( touchEvent.target.tagName.toLowerCase() != 'img' ) // potential fix for the Android image menu on tap & hold
       }
     }
   }
+
+  // reset container size
+  this.containerW = this.container.offsetWidth;
+  this.containerH = this.container.offsetHeight;
 
   // get page position of container for relative mouse/touch position
   this.findPos( this.container );
@@ -143,7 +149,7 @@ tts.MouseAndTouchTracker.prototype.onStart = function ( touchEvent ) {
 
 tts.MouseAndTouchTracker.prototype.onMove = function ( touchEvent ) {
   // get position of holder for relative mouse/touch position
-  this.findPos(this.container);
+  // this.findPos(this.container);
 
   // store last position
   this.touchmovedlast.x = this.touchmoved.x;
@@ -167,7 +173,7 @@ tts.MouseAndTouchTracker.prototype.onMove = function ( touchEvent ) {
   }
 
   // check for mouse in/out and make the call if it's changed
-  if(this.touchcurrent.x < 0 || this.touchcurrent.x > this.container.offsetWidth || this.touchcurrent.y < 0 || this.touchcurrent.y > this.container.offsetHeight) {
+  if(this.touchcurrent.x < 0 || this.touchcurrent.x > this.containerW || this.touchcurrent.y < 0 || this.touchcurrent.y > this.containerH) {
     if( this.touch_is_inside ) this.onLeave();
     this.touch_is_inside = false;
   } else {
