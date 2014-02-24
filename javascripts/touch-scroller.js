@@ -120,7 +120,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         setScrollerDelegate( defaultOptions.scrollerDelegate );
         _cssHelper = new tts.CSSHelper();
         _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements, defaultOptions.disablesRightClick );
-        if( _hasScrollBars ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
+        if( _hasScrollBars == true ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
 
         calculateDimensions();
         activate();
