@@ -46,6 +46,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         isPaged: true,
         defaultOrientation: tts.TouchScroller.HORIZONTAL,
         disabledElements: 'div img nav section article',
+        disablesRightClick: false,
         // delegate
         scrollerDelegate: function(){}
     };
@@ -75,6 +76,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
 
         // touch helpers
         _cursor = ( defaultOptions.hasCursor ) ? new tts.CursorHand() : null,
+        _cursorState = null,
         _touchTracker = null,
         _cssHelper = null,
         _scrollerDelegate = null,
@@ -118,13 +120,12 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _scrollerId = generateScrollerId();
         setScrollerDelegate( defaultOptions.scrollerDelegate );
         _cssHelper = new tts.CSSHelper();
-        _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements );
-        if( _hasScrollBars ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
+        _touchTracker = new tts.MouseAndTouchTracker( scrollOuterEl, touchUpdated, false, defaultOptions.disabledElements, defaultOptions.disablesRightClick );
+        if( _hasScrollBars == true ) _scrollbars = new Point2d( new ScrollBar( AXIS_X, SIZE_W ), new ScrollBar( AXIS_Y, SIZE_H ) );
 
-        setOrientation( _orientation );
         calculateDimensions();
-
         activate();
+        setOrientation( _orientation );
     };
 
     var touchUpdated = function( state, touchEvent ) {
@@ -151,6 +152,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
     var onStart = function( touchEvent ) {
         if( _timerActive == false ) return;
         if( tts.TouchScroller.innermostScrollerInstance == null ) tts.TouchScroller.innermostScrollerInstance = _publicInterface;
+        calculateDimensions();
         _scrollerDelegate.touchStart();
         _cancelClick = false;
         _scrollOuterEl.addEventListener('click', onClicked);
@@ -160,7 +162,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         // cancel scrolling if there's an inner scroller in the same orientation
         // or if there's another scroller that's been activated in a different direction
         // or if it's shut down
-        if( tts.TouchScroller.innermostScrollerInstance != _publicInterface && ( tts.TouchScroller.innermostScrollerInstance.getOrientation() == _orientation || _orientation == tts.TouchScroller.UNLOCKED ) ) return;   // canceling b/c same direction as inner scroller (or outer is a grid (unlocked))
+        if( tts.TouchScroller.innermostScrollerInstance != null && tts.TouchScroller.innermostScrollerInstance != _publicInterface && ( tts.TouchScroller.innermostScrollerInstance.getOrientation() == _orientation || _orientation == tts.TouchScroller.UNLOCKED ) ) return;   // canceling b/c same direction as inner scroller (or outer is a grid (unlocked))
         if( tts.TouchScroller.activeScrollerInstance != null && tts.TouchScroller.activeScrollerInstance != _scrollerId ) return;   // canceling b/c inner scroller has been activated in a different orientation
         if( _timerActive == false ) return;
 
@@ -188,6 +190,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
 
         // reset touchscroll props after a tick
         setTimeout(function(){ 
+            _scrollOuterEl.removeEventListener('click', onClicked);
             _hasLockedDragAxis = false;
             _dragLockAxis = null;
             _cancelClick = false;
@@ -230,8 +233,13 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
     var onClicked = function(e) {
         if( _cancelClick == true ) {
             eventPreventDefault( e );
+            eventStopPropa( e );
         }
     };
+
+    var clickIsCanceled = function() {
+        return _cancelClick;
+    }
 
     var decideDragAxis = function( direction ) {
         _hasLockedDragAxis = true;
@@ -269,16 +277,19 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
     };
 
     var updateCursor = function( state ) {
-        if( _cursor && _timerActive ) {
+        if( _cursor && _timerActive && state != _cursorState ) {
+            _cursorState = state;
             tts.CursorHand.setCursorFromTouchTrackerState( _touchTracker, _cursor, state );
         }
     };
 
     var runTimer = function() {
         if( _timerActive && _curPosition ) {
-            calculateDimensions();
+            // calculateDimensions();
             if( !_touchTracker.is_touching ) {
                 updateWhileNotTouching();
+            } else {
+                redraw();
             }
 
             if( _scrollsX ) checkForClosestIndex( AXIS_X, SIZE_W );
@@ -339,8 +350,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         ( _scrollsY ) ? updateAxisPosition( AXIS_Y, moveY ) : constrainContent( AXIS_Y );
 
         // update DOM and report back
-        redraw();
-        updateScrollbar();
+        // redraw();
         _scrollerDelegate.updatePosition( _curPosition.x, _curPosition.y, true );
     };
 
@@ -1002,6 +1012,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         getPage : getPage,
         getNumPages : getNumPages,
         getScrollLength : getScrollLength,
+        clickIsCanceled: clickIsCanceled,
         scrollToEnd : scrollToEnd,
         scrollToTop: scrollToTop,
         scrollToPosition : scrollToPosition,

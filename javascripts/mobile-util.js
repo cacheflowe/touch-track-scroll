@@ -57,6 +57,20 @@ MobileUtil.hideSoftKeyboard = function() {
   $('input').blur()
 };
 
+MobileUtil.enableActivePseudoStyles = function() {
+  // activates :active css on touch
+  document.addEventListener("touchstart", function() {},false);
+}
+
+MobileUtil.addTouchClassToBody = function() {
+  // add touch class to body on first actual touch
+  var addTouchClassHandler = function() {
+    document.documentElement.classList.add('touch');
+    document.removeEventListener("touchstart", addTouchClassHandler);
+  }
+  document.addEventListener("touchstart", addTouchClassHandler,false);
+}
+
 MobileUtil.addAndroidClasses = function() {
   // adds classes for android, android 4.0+ and not-android
   var isAndroid = ( navigator.userAgent.toLowerCase().match(/android/i) ) ? true : false;
