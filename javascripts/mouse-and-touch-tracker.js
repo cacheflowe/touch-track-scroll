@@ -28,7 +28,6 @@ tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disab
   this.is_mouseup_tracking = isMouseUpTracking;
   disabledElements = disabledElements || '';
   this.disabled_elements = disabledElements.split(' ') || [];
-  this.findPosHelper = null;
 
   // add touch event listeners with scope for removal
   var self = this;
@@ -43,7 +42,7 @@ tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disab
   if( document.attachEvent ) document.attachEvent( "onmouseup", this.endDocumentFunction ); else document.addEventListener( "mouseup", this.endDocumentFunction, false );
   if( document.attachEvent ) document.attachEvent( "onmousemove", this.moveFunction ); else document.addEventListener( "mousemove", this.moveFunction, false );
 
-  // add touch listening (non-IE browsers)
+  // add touch listening (non-or-modern IE browsers)
   if( !this.container.attachEvent ) {
     this.container.addEventListener( "touchstart", this.startFunction, false );
     this.container.addEventListener( "touchend", this.endFunction, false );
@@ -53,7 +52,7 @@ tts.MouseAndTouchTracker = function( element, callback, isMouseUpTracking, disab
   }
 
   // hmm...
-  this.recurseDisableElements( this.container ); // !this.is_mouseup_tracking  // if(!navigator.userAgent.match(/Android/i))
+  this.recurseDisableElements( this.container ); // not needed anymore?
   if( disablesRightClick == true ) this.disableRightClick();
 }
 
@@ -226,11 +225,10 @@ tts.MouseAndTouchTracker.prototype.dispose = function () {
   this.touchmoved = false;
 };
 
-tts.MouseAndTouchTracker.prototype.findPos = function(obj) {
-  this.findPosHelper = tts.CSSHelper.findPos(obj);
-  // store position from cumulative offset
-  this.container_position.x = this.findPosHelper[0];
-  this.container_position.y = this.findPosHelper[1];
+tts.MouseAndTouchTracker.prototype.findPos = function(el) {
+  var elRect = el.getBoundingClientRect();
+  this.container_position.x = elRect.left;
+  this.container_position.y = elRect.top;
 };
 
 // indexOf polyfill for old IE
