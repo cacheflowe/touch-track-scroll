@@ -10,6 +10,8 @@
 
 /* Outer container - progressively enhance */
 .scroll-outer {
+  -ms-touch-action: none;
+  -ms-content-zooming: none;
   position: relative;
   overflow: hidden;
 }
