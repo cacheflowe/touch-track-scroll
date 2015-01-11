@@ -24,7 +24,7 @@ body {
   height: 200px;
 }
 .scroll-inner-secondary .page.odd {
-  background: #f0f;
+  background: #dedede;
 }
 
 /* Pages */
@@ -35,10 +35,10 @@ body {
   display: table;
 }
 .page.even {
-  background: #0ff;
+  background: #fefefe;
 }
 .page.odd {
-  background: #ff0;
+  background: #efefef;
 }
 .page article {
   display: table-cell;
