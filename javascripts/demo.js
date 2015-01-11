@@ -154,7 +154,7 @@ var scrollOptions = {
   pagedEasingFactor: 7,
   nonPagedFriction: 0.9,
   disablesRightClick: true,
-  pageNotches: 2
+  pageNotches: 1
 };
 
 // initialize the scroller with or main containers and options
