@@ -35,10 +35,10 @@ body {
   display: table;
 }
 .page.even {
-  background: #fefefe;
+  background: #fefedd;
 }
 .page.odd {
-  background: #efefef;
+  background: #efddef;
 }
 .page article {
   display: table-cell;
@@ -52,7 +52,7 @@ body {
   border-radius: 10px;
 }
 .selection.active {
-  background-color: #fff;
+  background-color: #ccc;
 }
 a, a:visited {
   text-decoration: none;

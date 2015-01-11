@@ -126,6 +126,21 @@ pagedFalseButton.addEventListener('click',function(){
   setActiveButton(pagedFalseButton, pagedButtons);
 },false);
 
+// setup (non-)notched toggle --------------------------------------------
+var notchedButtons = document.getElementsByClassName("notched");
+
+var notchedTrueButton = document.getElementById('notched-true');
+notchedTrueButton.addEventListener('click',function(){
+  scroller.setNotches(2);
+  setActiveButton(notchedTrueButton, notchedButtons);
+},false);
+
+var notchedFalseButton = document.getElementById('notched-false');
+notchedFalseButton.addEventListener('click',function(){
+  scroller.setNotches(1);
+  setActiveButton(notchedFalseButton, notchedButtons);
+},false);
+
 // basic scroller setup ------------------------------------------------
 var scrollerDelegate = {
   updatePosition: function(positionX, positionY, isTouching) {
