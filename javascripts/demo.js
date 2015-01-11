@@ -151,9 +151,10 @@ var scrollOptions = {
   defaultOrientation: tts.TouchScroller.HORIZONTAL,
   scrollerDelegate: scrollerDelegate,
   disabledElements: "div",
-  pagedEasingFactor: 6,
+  pagedEasingFactor: 7,
   nonPagedFriction: 0.9,
-  disablesRightClick: true
+  disablesRightClick: true,
+  pageNotches: 2
 };
 
 // initialize the scroller with or main containers and options
