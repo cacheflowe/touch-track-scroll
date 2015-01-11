@@ -96,7 +96,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
 
         // deal with pages
         _pageNotches = defaultOptions.pageNotches,
-        _pageStep = 1/_pageNotches,
+        _pageStep = 1 / _pageNotches,
         _isPaged = defaultOptions.isPaged,
         _pageTurnRatio = defaultOptions.pageTurnRatio * _pageStep,
         _pagedEasingFactor = defaultOptions.pagedEasingFactor,
@@ -644,6 +644,11 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _isPaged = isPaged;
     };
 
+    var setNotches = function( notches ) {
+        _pageNotches = notches;
+        _pageStep = 1 / _pageNotches;
+    };
+
     var setPage = function ( index, immediately, axis ) {
         var curAxis = ( _axis ) ? _axis : axis;
         if( !curAxis ) return;
@@ -1033,6 +1038,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         getOrientation : getOrientation,
         setBounces : setBounces,
         setIsPaged : setIsPaged,
+        setNotches : setNotches,
         prevPage : prevPage,
         nextPage : nextPage,
         setPage : setPage,
