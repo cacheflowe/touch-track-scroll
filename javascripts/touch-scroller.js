@@ -44,6 +44,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         hasCursor: true,
         hasScrollbars: true,
         isPaged: true,
+        pageNotches: 1,
         defaultOrientation: tts.TouchScroller.HORIZONTAL,
         disabledElements: 'div img nav section article',
         disablesRightClick: false,
@@ -94,9 +95,11 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _doesntNeedScroll = new Point2d( false, false ),
 
         // deal with pages
-        _pagedEasingFactor = defaultOptions.pagedEasingFactor,
-        _pageTurnRatio = defaultOptions.pageTurnRatio,
+        _pageNotches = defaultOptions.pageNotches,
+        _pageStep = 1 / _pageNotches,
         _isPaged = defaultOptions.isPaged,
+        _pageTurnRatio = defaultOptions.pageTurnRatio * _pageStep,
+        _pagedEasingFactor = defaultOptions.pagedEasingFactor,
 
         _numPages = new Point2d(),
         _pageIndex = new Point2d(),
@@ -334,8 +337,8 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
             _doesntNeedScroll.y = ( _containerSize.h > _contentSize.h );
             if( _doesntNeedScroll.x == true ) _endPosition.x = 0;
             if( _doesntNeedScroll.y == true ) _endPosition.y = 0;
-            if( _pageIndex.x > _numPages.x - 1 ) _pageIndex.x = _numPages.x - 1;
-            if( _pageIndex.y > _numPages.y - 1 ) _pageIndex.y = _numPages.y - 1;
+            if( _pageIndex.x > _numPages.x - _pageStep ) _pageIndex.x = _numPages.x - _pageStep;
+            if( _pageIndex.y > _numPages.y - _pageStep ) _pageIndex.y = _numPages.y - _pageStep;
             if( _scrollsX ) sendBackInBounds( AXIS_X );
             if( _scrollsY ) sendBackInBounds( AXIS_Y );
             if( _scrollsX && _scrollbars ) _scrollbars.x.resizeScrollbar();
@@ -485,21 +488,33 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
             var dimension = getDimensionForAxis( axis );
             var prevPage = _pageIndex[ axis ];
             var pageChanged = false;
-            // have we swiped far enough to turn the page
-            if( _touchTracker.touchmoved[ axis ] > _containerSize[ dimension ] * _pageTurnRatio ) {
-                _pageIndex[ axis ] = ( _pageIndex[ axis ] == 0 ) ? 0 : _pageIndex[ axis ] - 1;
+            // have we swiped far enough to turn the page?
+            var pageTurnedNext =  _touchTracker.touchspeed[ axis ] <= 0 && _touchTracker.touchmoved[ axis ] < -_containerSize[ dimension ] * _pageTurnRatio;
+            var pageTurnedPrev =  _touchTracker.touchspeed[ axis ] >= 0 && _touchTracker.touchmoved[ axis ] > _containerSize[ dimension ] * _pageTurnRatio;
+            if( pageTurnedNext ) {
+                _pageIndex[ axis ] = _pageIndex[ axis ] + _pageStep;
                 pageChanged = true;
-            } else if ( _touchTracker.touchmoved[ axis ] < -_containerSize[ dimension ] * _pageTurnRatio ) {
-                _pageIndex[ axis ] = ( _pageIndex[ axis ] < _numPages[ axis ] - 1 ) ? _pageIndex[ axis ] + 1 : _numPages[ axis ] - 1;
+            } else if ( pageTurnedPrev ) {
+                _pageIndex[ axis ] = _pageIndex[ axis ] - _pageStep;
                 pageChanged = true;
             }
 
-            // checks whether we've gone more than halfway to a page, or allows above code to let us swipe slightly for next/prev pages
+            // checks whether we've gone more than halfway to a page - just find the closest index at that point
             if( !( prevIndex == _closestScrollIndex[ axis ] && prevIndex != _pageIndex[ axis ] ) ) {
-                _pageIndex[ axis ] = _closestScrollIndex[ axis ];
+                // if we've dragged beyond the closest index and are still swiping in that direction, add a page. feels like inertia
+                var extraPage = 0;
+                if( _pageIndex[ axis ] > prevIndex && _touchTracker.touchspeed[ axis ] <= 0 && _curPosition[ axis ] < _closestScrollIndex[ axis ] * -_containerSize[ dimension ] ) extraPage = _pageStep;
+                if( _pageIndex[ axis ] < prevIndex && _touchTracker.touchspeed[ axis ] >= 0 && _curPosition[ axis ] > _closestScrollIndex[ axis ] * -_containerSize[ dimension ] ) extraPage = -_pageStep;
+
+                _pageIndex[ axis ] = _closestScrollIndex[ axis ] + extraPage;
                 pageChanged = true;
             }
 
+            // constrain page index
+            if( _pageIndex[ axis ] < 0 ) _pageIndex[ axis ] = 0;
+            if( _pageIndex[ axis ] > _numPages[ axis ] - 1 ) _pageIndex[ axis ] = _numPages[ axis ] - 1;
+
+            // tell delegate
             if( pageChanged == true && prevPage != _pageIndex[ axis ] ) {
                 _scrollerDelegate.pageChanged( _pageIndex[ axis ], axis );
             }
@@ -532,7 +547,19 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
 
     var checkForClosestIndex = function( axis, dimension ) {
         // set closest index and update indicator
-        var closestIndex = Math.round( _curPosition[ axis ] / -_containerSize[ dimension ] );
+        var closestIndex = _curPosition[ axis ] / -_containerSize[ dimension ];
+        if( _pageNotches == 1 ) {
+            closestIndex = Math.round(closestIndex);
+        } else {
+            // if notched, find the closest notched index
+            var closestIndexLowInt = Math.floor(closestIndex);
+            var closestIndexHighInt = Math.ceil(closestIndex);
+            for (var i = 0; i < _pageNotches + 1; i++) {
+                if( Math.abs(closestIndexLowInt + i * _pageStep - closestIndex) <= (_pageStep/2) ) {
+                    closestIndex = closestIndexLowInt + i * _pageStep;
+                }
+            };
+        }
         if( _closestScrollIndex[ axis ] != closestIndex ) {
             _closestScrollIndex[ axis ] = closestIndex;
             closestIndexChanged( axis );
@@ -617,6 +644,11 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         _isPaged = isPaged;
     };
 
+    var setNotches = function( notches ) {
+        _pageNotches = notches;
+        _pageStep = 1 / _pageNotches;
+    };
+
     var setPage = function ( index, immediately, axis ) {
         var curAxis = ( _axis ) ? _axis : axis;
         if( !curAxis ) return;
@@ -658,9 +690,9 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
 
         if( _timerActive == false ) return;
         if( loops == true && _pageIndex[ curAxis ] == 0 )
-            _pageIndex[ curAxis ] = _numPages[ curAxis ] - 1;
+            _pageIndex[ curAxis ] = _numPages[ curAxis ] - _pageStep;
         else
-            _pageIndex[ curAxis ] = ( _pageIndex[ curAxis ] > 0 ) ? _pageIndex[ curAxis ] - 1 : 0;
+            _pageIndex[ curAxis ] = ( _pageIndex[ curAxis ] > 0 ) ? _pageIndex[ curAxis ] - _pageStep : 0;
         if (immediately) _curPosition[ curAxis ] = _pageIndex[ curAxis ] * -_containerSize[ getDimensionForAxis( curAxis ) ];
         showScrollbars();
     };
@@ -670,10 +702,10 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         if( !curAxis ) return;
 
         if( _timerActive == false ) return;
-        if( loops == true && _pageIndex[ curAxis ] == _numPages[ curAxis ] - 1 )
+        if( loops == true && _pageIndex[ curAxis ] == _numPages[ curAxis ] - _pageStep )
             _pageIndex[ curAxis ] = 0;
         else
-            _pageIndex[ curAxis ] = ( _pageIndex[ curAxis ] < _numPages[ curAxis ] - 1 ) ? _pageIndex[ curAxis ] + 1 : _numPages[ curAxis ] - 1;
+            _pageIndex[ curAxis ] = ( _pageIndex[ curAxis ] < _numPages[ curAxis ] - _pageStep ) ? _pageIndex[ curAxis ] + _pageStep : _numPages[ curAxis ] - _pageStep;
         if (immediately) _curPosition[ curAxis ] = _pageIndex[ curAxis ] * -_containerSize[ getDimensionForAxis( curAxis ) ];
         showScrollbars();
     };
@@ -1006,6 +1038,7 @@ tts.TouchScroller = function( scrollOuterEl, scrollInnerEl, options ) {
         getOrientation : getOrientation,
         setBounces : setBounces,
         setIsPaged : setIsPaged,
+        setNotches : setNotches,
         prevPage : prevPage,
         nextPage : nextPage,
         setPage : setPage,

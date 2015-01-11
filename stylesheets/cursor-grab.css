@@ -1,6 +1,7 @@
 .hand {
   cursor: hand; 
   cursor: grab; 
+  cursor: -ms-grab; 
   cursor: -moz-grab; 
   cursor: -webkit-grab;
 }
@@ -12,6 +13,7 @@
 .handGrab {
   cursor: hand; 
   cursor: grabbing;
+  cursor: -ms-grabbing;
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
 }

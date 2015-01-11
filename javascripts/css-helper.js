@@ -46,7 +46,7 @@ tts.CSSHelper = function() {
     // since we're manually setting position, generally we're doing this in a frame loop, and should disable css transitions if true
     if( keepTransition == false ) clearCssTransition( element );
 
-    if( !_transformsEnabled ) {
+    if( !_transformsEnabled  || _isPreAndroid4 == true ) {
       // move element by top/left if transitions aren't supported
       element.style.left = tts.CSSHelper.roundForCSS( x ) + 'px';
       element.style.top = tts.CSSHelper.roundForCSS( y ) + 'px';
@@ -102,7 +102,7 @@ tts.CSSHelper.getVendorPrefix = function( styleSuffix ) {
   // see if the major browser vendor prefixes are detected for css transforms
   var checkVendor = function() {
     if(!navigator.userAgent.toLowerCase().match(/msie 9/i)){
-      var vendors = ['Moz', 'Webkit'];  // should have 'ms' also, but IE9 transform doesn't work, even though it claims to exist. so, we leave it out
+      var vendors = ['Moz', 'moz', 'Webkit', 'ms'];  // should have 'ms' also, but IE9 transform doesn't work, even though it claims to exist. so, we leave it out
       var element = findElementWithStyle();
       for( var vendor in vendors ) {
         if( element.style[ vendors[vendor] + styleSuffix ] !== undefined ) {
@@ -132,36 +132,3 @@ tts.CSSHelper.roundForCSS = function( number ) {
   return Math.round( number * multiplier ) / multiplier;
 };
 
-// find the location of an element on the page, taking into consideration either native left/top or CSS transform positioning, and page scroll offset
-// cobbled from:
-// http://javascript.about.com/od/browserobjectmodel/a/bom12.htm
-// http://www.quirksmode.org/js/findpos.html
-// with original code to handle webkitTransform positioning added into the mix
-tts.CSSHelper.posArray = [0,0]; // reuse to avoid creating new objects
-tts.CSSHelper.findPos = function(obj) {
-  // get page scroll offset
-  var scrollX = window.pageXOffset ? window.pageXOffset : document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft;
-  var scrollY = window.pageYOffset ? window.pageYOffset : document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
-
-  // get element location
-  var curleft = curtop = 0;
-
-  if (obj.offsetParent) {
-    do {
-      // add up css transform: translate3d positioning
-      if( obj.offsetParent && typeof obj.offsetParent.style !== 'undefined' && typeof obj.offsetParent.style[ tts.CSSHelper.transformString ] !== 'undefined' && obj.offsetParent.style[ tts.CSSHelper.transformString ] ) {  // last conditional fixes chrome on windows
-        var transformXYZArray = obj.offsetParent.style[ tts.CSSHelper.transformString ].split('translate3d(')[1].split(')')[0].replace(/ +/g, '').replace(/px+/g, '').split(',');
-        curleft += parseInt( transformXYZArray[0] );
-        curtop += parseInt( transformXYZArray[1] );
-      }
-      // add normal positioning offset
-      curleft += obj.offsetLeft;
-      curtop += obj.offsetTop;
-    } while (obj = obj.offsetParent);
-  }
-
-  // return position from cumulative offset
-  tts.CSSHelper.posArray[0] = curleft - scrollX;
-  tts.CSSHelper.posArray[1] = curtop - scrollY;
-  return tts.CSSHelper.posArray;
-};
